@@ -6,15 +6,22 @@ using System.Threading.Tasks;
 
 namespace Marketplace.Domain
 {
-   public class ClassifiedAdd
+    public class ClassifiedAdd
     {
-        public Guid Id { get; private set; }
+        public ClassifiedAdId Id { get; }
+        private UserId _ownerId { get; set; }
+        public ClassifiedAdd(ClassifiedAdId id,UserId ownerId)
+        {
 
+            Id = id;
+            _ownerId = ownerId;
+        }
 
-        private Guid _ownerId { get; set; }
+        public void SetTitle(string title) => _title = title;
+        public void UpdateText(string text) => _text = text;
+        public void UpdatePrice(decimal price) => _price = price;
         private decimal _price { get; set; }
         private string _title { get; set; }
-
         private string _text { get; set; }
     }
 }
