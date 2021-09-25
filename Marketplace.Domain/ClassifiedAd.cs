@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Marketplace.Domain
 {
-    public class ClassifiedAdd
+    public class ClassifiedAd
     {
         public ClassifiedAdId Id { get; }
         private UserId _ownerId { get; set; }
-        public ClassifiedAdd(ClassifiedAdId id,UserId ownerId)
+        public ClassifiedAd(ClassifiedAdId id,UserId ownerId)
         {
 
             Id = id;
