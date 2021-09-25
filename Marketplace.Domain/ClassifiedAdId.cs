@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Marketplace.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,15 +7,10 @@ using System.Threading.Tasks;
 
 namespace Marketplace.Domain
 {
-    public class ClassifiedAdId
+    public class ClassifiedAdId : Value<ClassifiedAdId>
     {
         private readonly Guid _value;
 
-        public ClassifiedAdId(Guid value)
-        {
-            if (value == default)
-                throw new ArgumentNullException("Classified Ad cannot be empty", nameof(value));
-            _value = value;
-        }
+        public ClassifiedAdId(Guid value) => _value = value;
     }
 }

@@ -18,5 +18,17 @@ namespace Marketplace.Tests
 
             Assert.Equal(firstAmount, secondAmount);
         }
+
+
+        [Fact]
+        public void Sum_of_Money_gives_full_amount()
+        {
+            var coin1 = new Money(1);
+            var coin2 = new Money(2);
+            var coin3 = new Money(2);
+
+            var backnote = new Money(5);
+            Assert.Equal(backnote, coin1 + coin2 + coin3);
+        }
     }
 }
