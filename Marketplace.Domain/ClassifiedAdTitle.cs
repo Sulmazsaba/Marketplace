@@ -16,7 +16,7 @@ namespace Marketplace.Domain
         private ClassifiedAdTitle(string value)
         {
             if (value.Length > 100)
-                throw new ArgumentOutOfRangeException("Title cannot be longer than 100 Characters",nameof(value));
+                throw new ArgumentOutOfRangeException(nameof(value),"Title cannot be longer than 100 Characters");
 
             _value = value;
         }
