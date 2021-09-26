@@ -15,7 +15,7 @@ namespace Marketplace.Domain
             new Money(amount, currency, currencyLookup);
         public static Money FromString(string amount, string currency, ICurrencyLookup currencyLookup) =>
             new Money(decimal.Parse(amount), currency, currencyLookup);
-        protected Money(decimal amount, string currencyCode, ICurrencyLookup currencyLookup)
+        public Money(decimal amount, string currencyCode, ICurrencyLookup currencyLookup)
         {
             if (string.IsNullOrEmpty(currencyCode))
                 throw new ArgumentNullException(nameof(currencyCode), "currency code must be specified");
@@ -29,7 +29,6 @@ namespace Marketplace.Domain
             Amount = amount;
             Currency= currency;
         }
-
         private Money(decimal amount,CurrencyDetails currency)
         {
             Amount = amount;
