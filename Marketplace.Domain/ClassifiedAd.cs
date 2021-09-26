@@ -4,44 +4,53 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Marketplace.Framework;
 
 namespace Marketplace.Domain
 {
-    public class ClassifiedAd
+    public class ClassifiedAd : Entity
     {
-        public ClassifiedAdId Id { get; }
-        public ClassifiedAd(ClassifiedAdId id, UserId ownerId)
-        {
-            Id = id;
-            OwnerId = ownerId;
-            State = ClassifiedAdState.Inactive;
-        }
+        public ClassifiedAdId Id { get; private set; }
+        public UserId OwnerId { get; private set; }
+        public Price Price1 { get; private set; }
+        public ClassifiedAdTitle Title { get; private set; }
+        public ClassifiedAdText Text { get; private set; }
+        public ClassifiedAdState State { get; private set; }
+        public UserId ApprovedBy { get; private set; }
+        public ClassifiedAd(ClassifiedAdId id, UserId ownerId) =>
+            Apply(new Events.ClassifiedAdCreated()
+            {
+                Id = id,
+                OwnerId = ownerId
+            });
 
-        public void SetTitle(ClassifiedAdTitle title)
-        {
-            Title = title;
-            EnsureValidState();
-        }
+        public void SetTitle(ClassifiedAdTitle title)=>
+            Apply(new Events.ClassifiedAdTitleChanged()
+            {
+                Id = Id,
+                Title = title
+            });
 
-        public void UpdateText(ClassifiedAdText text)
-        {
-            Text = text;
-            EnsureValidState();
-        }
+        public void UpdateText(ClassifiedAdText text)=>
+            Apply(new Events.ClassifiedAdTextUpdated()
+            {
+                Id = Id,
+                Text = text
+            });
+        public void UpdatePrice(Price price)=>
+            Apply(new Events.ClassifiedAdPriceUpdated()
+            {
+                Id = Id,
+                CurrencyCode = Price1.Currency.CurrencyCode,
+                Price = Price1.Amount
+            });
 
-        public void UpdatePrice(Price price)
-        {
-            Price1 = price;
-            EnsureValidState();
-        }
-
-        public void RequestToPublish()
-        {
-            State = ClassifiedAdState.PendingReview;
-            EnsureValidState();
-        }
-
-        protected void EnsureValidState()
+        public void RequestToPublish() =>
+            Apply(new Events.ClassifiedAdSentForReview()
+            {
+                Id = Id
+            });
+        protected override void EnsureValidState()
         {
             var valid = Id != null && OwnerId != null && (State switch
             {
@@ -54,12 +63,31 @@ namespace Marketplace.Domain
                 throw new InvalidEntityStateException(this, $"Post-checks failed in state {State}");
 
         }
-        public UserId OwnerId { get; }
-        public Price Price1 { get; private set; }
-        public ClassifiedAdTitle Title { get; private set; }
-        public ClassifiedAdText Text { get; private set; }
-        public ClassifiedAdState State { get; private set; }
-        public UserId ApprovedBy { get; private set; }
+
+        protected override void When(object @event)
+        {
+            switch (@event)
+            {
+                case Events.ClassifiedAdCreated e:
+                    Id = new ClassifiedAdId(e.Id);
+                    OwnerId = new UserId(e.OwnerId);
+                    State = ClassifiedAdState.Inactive;
+                    break;
+                case Events.ClassifiedAdTitleChanged e:
+                    Title = new ClassifiedAdTitle(e.Title);
+                    break;
+                case Events.ClassifiedAdTextUpdated e:
+                    Text = new ClassifiedAdText(e.Text);
+                    break;
+                case Events.ClassifiedAdPriceUpdated e:
+                    Price1 = new Price(e.Price, e.CurrencyCode);
+                    break;
+                case Events.ClassifiedAdSentForReview e:
+                    State = ClassifiedAdState.PendingReview;
+                    break;
+                    
+            }
+        }
 
         public enum ClassifiedAdState
         {

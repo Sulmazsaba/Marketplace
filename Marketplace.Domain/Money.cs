@@ -29,12 +29,14 @@ namespace Marketplace.Domain
             Amount = amount;
             Currency= currency;
         }
-        private Money(decimal amount,CurrencyDetails currency)
+        protected Money(decimal amount,CurrencyDetails currency)
         {
             Amount = amount;
             Currency = currency; 
             
         }
+        
+
         public decimal Amount { get; }
         public CurrencyDetails Currency { get; }
         public Money Add(Money summand)
