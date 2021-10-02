@@ -22,7 +22,7 @@ namespace Marketplace.Tests
         {
             _classifiedAd.SetTitle(ClassifiedAdTitle.FromString("Test ad"));
             _classifiedAd.UpdateText(ClassifiedAdText.FromString("please buy my software"));
-            _classifiedAd.UpdatePrice(new Price(100, "EUR", new FakeCurrencyLookup()));
+            //_classifiedAd.UpdatePrice(new Price(100, "EUR", new FakeCurrencyLookup()));
             _classifiedAd.RequestToPublish();
             Assert.Equal(_classifiedAd.State, ClassifiedAd.ClassifiedAdState.PendingReview);
         }
@@ -31,7 +31,7 @@ namespace Marketplace.Tests
         public void Cannot_publish_without_title()
         {
             _classifiedAd.UpdateText(ClassifiedAdText.FromString("please buy my software"));
-            _classifiedAd.UpdatePrice(new Price(100, "EUR", new FakeCurrencyLookup()));
+            //_classifiedAd.UpdatePrice(new Price(100, "EUR", new FakeCurrencyLookup()));
             Assert.Throws<InvalidEntityStateException>(() => _classifiedAd.RequestToPublish());
         }
 
@@ -39,7 +39,7 @@ namespace Marketplace.Tests
         public void Cannot_publish_without_text()
         {
             _classifiedAd.SetTitle(ClassifiedAdTitle.FromString("Test ad"));
-            _classifiedAd.UpdatePrice(new Price(100, "EUR", new FakeCurrencyLookup()));
+            //_classifiedAd.UpdatePrice(new Price(100, "EUR", new FakeCurrencyLookup()));
             Assert.Throws<InvalidEntityStateException>(() => _classifiedAd.RequestToPublish());
         }
 
@@ -57,7 +57,7 @@ namespace Marketplace.Tests
 
             _classifiedAd.SetTitle(ClassifiedAdTitle.FromString("Test ad"));
             _classifiedAd.UpdateText(ClassifiedAdText.FromString("please buy my software"));
-            _classifiedAd.UpdatePrice(new Price(0, "EUR", new FakeCurrencyLookup()));
+            //_classifiedAd.UpdatePrice(new Price(0, "EUR", new FakeCurrencyLookup()));
             Assert.Throws<InvalidEntityStateException>(() => _classifiedAd.RequestToPublish());
         }
     }
