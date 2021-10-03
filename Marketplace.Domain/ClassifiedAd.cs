@@ -9,15 +9,16 @@ using Marketplace.Framework;
 
 namespace Marketplace.Domain
 {
-    public class ClassifiedAd : Entity
+    public class ClassifiedAd : AggregateRoot<ClassifiedAdId>
     {
         public ClassifiedAdId Id { get; private set; }
         public UserId OwnerId { get; private set; }
-        public Price Price1 { get; private set; }
+        public Price Price { get; private set; }
         public ClassifiedAdTitle Title { get; private set; }
         public ClassifiedAdText Text { get; private set; }
         public ClassifiedAdState State { get; private set; }
         public UserId ApprovedBy { get; private set; }
+
         public ClassifiedAd(ClassifiedAdId id, UserId ownerId) =>
             Apply(new Events.ClassifiedAdCreated()
             {
@@ -42,8 +43,8 @@ namespace Marketplace.Domain
             Apply(new Events.ClassifiedAdPriceUpdated()
             {
                 Id = Id,
-                CurrencyCode = Price1.Currency.CurrencyCode,
-                Price = Price1.Amount
+                CurrencyCode = Price.Currency.CurrencyCode,
+                Price = Price.Amount
             });
 
         public void RequestToPublish() =>
@@ -55,8 +56,8 @@ namespace Marketplace.Domain
         {
             var valid = Id != null && OwnerId != null && (State switch
             {
-                ClassifiedAdState.PendingReview => Text != null && Title != null && Price1?.Amount > 0,
-                ClassifiedAdState.Active => Text != null && Title != null && Price1?.Amount > 0 && ApprovedBy != null,
+                ClassifiedAdState.PendingReview => Text != null && Title != null && Price?.Amount > 0,
+                ClassifiedAdState.Active => Text != null && Title != null && Price?.Amount > 0 && ApprovedBy != null,
                 _ => true
             });
 
@@ -81,7 +82,7 @@ namespace Marketplace.Domain
                     Text = new ClassifiedAdText(e.Text);
                     break;
                 case Events.ClassifiedAdPriceUpdated e:
-                    Price1 = new Price(e.Price, e.CurrencyCode);
+                    Price = new Price(e.Price, e.CurrencyCode);
                     break;
                 case Events.ClassifiedAdSentForReview e:
                     State = ClassifiedAdState.PendingReview;
