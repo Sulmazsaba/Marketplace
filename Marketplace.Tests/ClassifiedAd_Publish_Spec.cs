@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Marketplace.Domain;
+using Marketplace.Domain.Exceptions;
 using Xunit;
 
 namespace Marketplace.Tests

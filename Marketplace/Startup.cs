@@ -7,10 +7,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Marketplace.Api;
+using Marketplace.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+using static Marketplace.Contracts.ClassifiedAds;
 
 namespace Marketplace
 {
@@ -27,6 +30,12 @@ namespace Marketplace
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton(new ClassifiedAdsApplicationService());
+            services.AddSingleton<IEntityStore, RavenDbEntityStore>();
+            services.AddScoped<IHandleCommand<V1.Create>>(c =>
+                new RetryingCommandHandler<V1.Create>(
+                    new CreateClassifiedAdHandler(
+                        c.GetService<RavenDbEntityStore>())));
 
             services.AddMvc(opt => opt.EnableEndpointRouting = false);
             services.AddSwaggerGen(c =>
@@ -61,7 +70,7 @@ namespace Marketplace
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "ClassifiedAds v1");
                 c.RoutePrefix = string.Empty;
             });
-            
+
 
         }
     }
