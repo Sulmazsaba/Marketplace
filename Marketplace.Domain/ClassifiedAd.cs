@@ -18,28 +18,32 @@ namespace Marketplace.Domain
         public ClassifiedAdText Text { get; private set; }
         public ClassifiedAdState State { get; private set; }
         public UserId ApprovedBy { get; private set; }
+        public List<Picture> Pictures { get; private set; }
 
-        public ClassifiedAd(ClassifiedAdId id, UserId ownerId) =>
+        public ClassifiedAd(ClassifiedAdId id, UserId ownerId)
+        {
+            Pictures = new List<Picture>();
             Apply(new Events.ClassifiedAdCreated()
             {
                 Id = id,
                 OwnerId = ownerId
             });
+        }
 
-        public void SetTitle(ClassifiedAdTitle title)=>
+        public void SetTitle(ClassifiedAdTitle title) =>
             Apply(new Events.ClassifiedAdTitleChanged()
             {
                 Id = Id,
                 Title = title
             });
 
-        public void UpdateText(ClassifiedAdText text)=>
+        public void UpdateText(ClassifiedAdText text) =>
             Apply(new Events.ClassifiedAdTextUpdated()
             {
                 Id = Id,
                 Text = text
             });
-        public void UpdatePrice(Price price)=>
+        public void UpdatePrice(Price price) =>
             Apply(new Events.ClassifiedAdPriceUpdated()
             {
                 Id = Id,
@@ -51,6 +55,17 @@ namespace Marketplace.Domain
             Apply(new Events.ClassifiedAdSentForReview()
             {
                 Id = Id
+            });
+
+        public void AddPicture(PictureSize size, Uri pictureUri) =>
+            Apply(new Events.PictureAddedToClassifiedAd()
+            {
+                ClassifiedAdId = Id,
+                Width = size.Width,
+                Height = size.Height,
+                Url = pictureUri.ToString(),
+                PictureId = new Guid()
+
             });
         protected override void EnsureValidState()
         {
@@ -87,7 +102,17 @@ namespace Marketplace.Domain
                 case Events.ClassifiedAdSentForReview e:
                     State = ClassifiedAdState.PendingReview;
                     break;
-                    
+                case Events.PictureAddedToClassifiedAd e:
+                    var newPicture = new Picture()
+                    {
+                        Location = new Uri(e.Url),
+                        Order = Pictures.Max(x => x.Order) + 1,
+                        Size = new PictureSize(e.Width, e.Height)
+                    };
+                    Pictures.Add(newPicture);
+                    break;
+
+
             }
         }
 
