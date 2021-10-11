@@ -68,6 +68,18 @@ namespace Marketplace.Domain
                 Order = Pictures.Max(i=>i.Order)
 
             });
+
+        public void ResizePicture(PictureId pictureId, PictureSize pictureSize)
+        {
+            var picture = FindPicture(pictureId);
+            if (picture == null)
+                throw new InvalidOperationException("Cannot resize a picture that I don't have");
+            picture.Resize(pictureSize);
+        }
+
+        private Picture FindPicture(PictureId id) => Pictures.FirstOrDefault(i => i.Id == id);
+
+        
         protected override void EnsureValidState()
         {
             var valid = Id != null && OwnerId != null && (State switch
@@ -108,7 +120,6 @@ namespace Marketplace.Domain
                     ApplyToEntity(picture,e);
                     Pictures.Add(picture);
                     break;
-
 
             }
         }

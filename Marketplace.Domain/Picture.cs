@@ -12,6 +12,14 @@ namespace Marketplace.Domain
         internal PictureSize Size { get; set; }
         internal Uri Location { get; set; }
         internal int Order { get; set; }
+
+        public void Resize(PictureSize size) => Apply(new Events.ClassifiedAdPictureResized
+        {
+            PictureId = Id.Value,
+            Height = size.Height,
+            Width = size.Width
+        });
+
         protected override void When(object @event)
         {
             switch (@event)
@@ -21,6 +29,9 @@ namespace Marketplace.Domain
                     Size = new PictureSize(e.Width, e.Height);
                     Location = new Uri(e.Url);
                     Order = e.Order;
+                    break;
+                case Events.ClassifiedAdPictureResized e:
+                    Size = new PictureSize(e.Width, e.Height);
                     break;
             }
         }
