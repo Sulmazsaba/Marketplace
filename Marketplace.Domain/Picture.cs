@@ -14,12 +14,19 @@ namespace Marketplace.Domain
         internal int Order { get; set; }
         protected override void When(object @event)
         {
-            
+            switch (@event)
+            {
+                case Events.PictureAddedToClassifiedAd e:
+                    Id = new PictureId(e.PictureId);
+                    Size = new PictureSize(e.Width, e.Height);
+                    Location = new Uri(e.Url);
+                    Order = e.Order;
+                    break;
+            }
         }
 
-        protected override void EnsureValidState()
+        public Picture(Action<object> applier) : base(applier)
         {
-           
         }
     }
 

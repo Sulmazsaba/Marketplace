@@ -58,13 +58,14 @@ namespace Marketplace.Domain
             });
 
         public void AddPicture(PictureSize size, Uri pictureUri) =>
-            Apply(new Events.PictureAddedToClassifiedAd()
+            Apply(new Events.PictureAddedToClassifiedAd
             {
                 ClassifiedAdId = Id,
                 Width = size.Width,
                 Height = size.Height,
                 Url = pictureUri.ToString(),
-                PictureId = new Guid()
+                PictureId = new Guid(),
+                Order = Pictures.Max(i=>i.Order)
 
             });
         protected override void EnsureValidState()
@@ -103,13 +104,9 @@ namespace Marketplace.Domain
                     State = ClassifiedAdState.PendingReview;
                     break;
                 case Events.PictureAddedToClassifiedAd e:
-                    var newPicture = new Picture()
-                    {
-                        Location = new Uri(e.Url),
-                        Order = Pictures.Max(x => x.Order) + 1,
-                        Size = new PictureSize(e.Width, e.Height)
-                    };
-                    Pictures.Add(newPicture);
+                    var picture = new Picture(Apply);
+                    ApplyToEntity(picture,e);
+                    Pictures.Add(picture);
                     break;
 
 

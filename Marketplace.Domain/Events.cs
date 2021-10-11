@@ -20,7 +20,7 @@ namespace Marketplace.Domain
             public Guid Id { get; set; }
 
         }
-
+        
         public class ClassifiedAdTextUpdated
         {
             public string Text { get; set; }
@@ -46,7 +46,15 @@ namespace Marketplace.Domain
             public int Width { get; set; }
             public int Height { get; set; }
             public string Url { get; set; }
+            public int Order { get; set; }
 
+        }
+
+        public class ClassifiedAdPictureResized
+        {
+            public Guid PictureId { get; set; }
+            public int Width { get; set; }
+            public int Length { get; set; }
         }
     }
 
