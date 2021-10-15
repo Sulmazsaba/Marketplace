@@ -65,7 +65,7 @@ namespace Marketplace.Domain
                 Height = size.Height,
                 Url = pictureUri.ToString(),
                 PictureId = new Guid(),
-                Order = Pictures.Max(i=>i.Order)
+                Order = Pictures.Max(i => i.Order)
 
             });
 
@@ -79,15 +79,27 @@ namespace Marketplace.Domain
 
         private Picture FindPicture(PictureId id) => Pictures.FirstOrDefault(i => i.Id == id);
 
-        
+        private Picture FirstPicture => Pictures.OrderBy(i => i.Order).FirstOrDefault();
+
         protected override void EnsureValidState()
         {
-            var valid = Id != null && OwnerId != null && (State switch
-            {
-                ClassifiedAdState.PendingReview => Text != null && Title != null && Price?.Amount > 0,
-                ClassifiedAdState.Active => Text != null && Title != null && Price?.Amount > 0 && ApprovedBy != null,
-                _ => true
-            });
+            var valid = Id != null &&
+                        OwnerId != null &&
+                        (State switch
+                        {
+                            ClassifiedAdState.PendingReview =>
+                                Text != null &&
+                                Title != null &&
+                                Price?.Amount > 0 &&
+                            FirstPicture.HasCorrectSize(),
+                            ClassifiedAdState.Active =>
+                                Text != null &&
+                                Title != null &&
+                                Price?.Amount > 0 &&
+                                ApprovedBy != null &&
+                                FirstPicture.HasCorrectSize(),
+                            _ => true
+                        });
 
             if (!valid)
                 throw new InvalidEntityStateException(this, $"Post-checks failed in state {State}");
@@ -117,7 +129,7 @@ namespace Marketplace.Domain
                     break;
                 case Events.PictureAddedToClassifiedAd e:
                     var picture = new Picture(Apply);
-                    ApplyToEntity(picture,e);
+                    ApplyToEntity(picture, e);
                     Pictures.Add(picture);
                     break;
 

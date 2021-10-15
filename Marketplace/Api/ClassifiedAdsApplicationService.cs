@@ -35,7 +35,7 @@ namespace Marketplace.Api
 
         private async Task HandleCreate(V1.Create cmd)
         {
-            if (await _repository.Exists(cmd.Id.ToString()))
+            if (await _repository.Exists(new ClassifiedAdId(cmd.Id)))
                 throw new InvalidOperationException($"Entity with id {cmd.Id} already exists.");
 
             var classifiedAd = new ClassifiedAd(new ClassifiedAdId(cmd.Id), new UserId(cmd.OwnerId));
