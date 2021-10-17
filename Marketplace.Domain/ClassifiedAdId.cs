@@ -9,16 +9,18 @@ namespace Marketplace.Domain
 {
     public class ClassifiedAdId : Value<ClassifiedAdId>
     {
-        private readonly Guid _value;
+        public Guid Value { get; set; }
 
         public ClassifiedAdId(Guid value)
         {
             if (value == default)
                 throw new ArgumentNullException(nameof(value), "Classified Ad Id cannot be null");
 
-            _value = value;
+            Value = value;
         }
 
-        public static implicit operator Guid(ClassifiedAdId self) => self._value;
+        public static implicit operator Guid(ClassifiedAdId self) => self.Value;
+
+        public override string ToString() => Value.ToString();
     }
 }

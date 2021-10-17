@@ -9,9 +9,11 @@ namespace Marketplace.Domain
     // value object
     public class UserId
     {
-        private readonly Guid _value;
-        public UserId(Guid value) =>  _value = value;
+        public  Guid Value { get; set; }
+        public UserId(Guid value) =>  Value = value;
 
-        public static implicit operator Guid(UserId self) => self._value;
+        public static implicit operator Guid(UserId self) => self.Value;
+
+        public override string ToString() => Value.ToString();
     }
 }

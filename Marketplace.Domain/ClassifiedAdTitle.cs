@@ -28,5 +28,7 @@ namespace Marketplace.Domain
                 throw new ArgumentOutOfRangeException(nameof(value), "Title cannot be longer than 100 Characters");
 
         }
+
+        public ClassifiedAdTitle() { }
     }
 }

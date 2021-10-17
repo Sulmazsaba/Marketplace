@@ -1,24 +1,16 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Marketplace.Api;
-using Marketplace.Contracts;
 using Marketplace.Domain;
 using Marketplace.Domain.Repositories;
 using Marketplace.Framework;
 using Marketplace.Infrastructure;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using Raven.Client.Documents;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-using static Marketplace.Contracts.ClassifiedAds;
 
 namespace Marketplace
 {
@@ -41,7 +33,7 @@ namespace Marketplace
                 Database = "Marketplace_Chapter8",
                 Conventions =
                 {
-                    FindIdentityProperty = m => m.Name == "_databaseId"
+                    FindIdentityProperty = m => m.Name == "DbId"
                 }
             };
 
@@ -51,13 +43,6 @@ namespace Marketplace
             services.AddScoped<IUnitOfWork, RavenDbUnitOfWork>();
             services.AddScoped<IClassifiedAdRepository, ClassifiedAdRepository>();
             services.AddScoped<ClassifiedAdsApplicationService>();
-
-            //services.AddSingleton(new ClassifiedAdsApplicationService());
-            //services.AddSingleton<IEntityStore, RavenDbEntityStore>();
-            //services.AddScoped<IHandleCommand<V1.Create>>(c =>
-            //    new RetryingCommandHandler<V1.Create>(
-            //        new CreateClassifiedAdHandler(
-            //            c.GetService<RavenDbEntityStore>())));
 
             services.AddMvc(opt => opt.EnableEndpointRouting = false);
             services.AddSwaggerGen(c =>
