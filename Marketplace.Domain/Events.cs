@@ -10,7 +10,7 @@ namespace Marketplace.Domain
     {
         public class ClassifiedAdCreated
         {
-            public Guid Id { get; set; }
+            public ClassifiedAdId Id { get; set; }
             public Guid OwnerId { get; set; }
         }
 

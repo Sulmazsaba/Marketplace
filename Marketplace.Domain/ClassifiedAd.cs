@@ -13,10 +13,10 @@ namespace Marketplace.Domain
     {
         private string DbId
         {
-            get => $"ClassifiedAd/{Id}";
+            get => $"ClassifiedAd/{ClassifiedAdId}";
             set { }
         }
-        public ClassifiedAdId Id { get; private set; }
+        public ClassifiedAdId ClassifiedAdId { get; private set; }
         public UserId OwnerId { get; private set; }
         public Price Price { get; private set; }
         public ClassifiedAdTitle Title { get; private set; }
@@ -38,20 +38,20 @@ namespace Marketplace.Domain
         public void SetTitle(ClassifiedAdTitle title) =>
             Apply(new Events.ClassifiedAdTitleChanged()
             {
-                Id = Id,
+                Id = ClassifiedAdId,
                 Title = title
             });
 
         public void UpdateText(ClassifiedAdText text) =>
             Apply(new Events.ClassifiedAdTextUpdated()
             {
-                Id = Id,
+                Id = ClassifiedAdId,
                 Text = text
             });
         public void UpdatePrice(Price price) =>
             Apply(new Events.ClassifiedAdPriceUpdated()
             {
-                Id = Id,
+                Id = ClassifiedAdId,
                 CurrencyCode = Price.Currency.CurrencyCode,
                 Price = Price.Amount
             });
@@ -59,13 +59,13 @@ namespace Marketplace.Domain
         public void RequestToPublish() =>
             Apply(new Events.ClassifiedAdSentForReview()
             {
-                Id = Id
+                Id = ClassifiedAdId
             });
 
         public void AddPicture(PictureSize size, Uri pictureUri) =>
             Apply(new Events.PictureAddedToClassifiedAd
             {
-                ClassifiedAdId = Id,
+                ClassifiedAdId = ClassifiedAdId,
                 Width = size.Width,
                 Height = size.Height,
                 Url = pictureUri.ToString(),
@@ -88,7 +88,7 @@ namespace Marketplace.Domain
 
         protected override void EnsureValidState()
         {
-            var valid = Id != null &&
+            var valid = ClassifiedAdId != null &&
                         OwnerId != null &&
                         (State switch
                         {
@@ -116,9 +116,10 @@ namespace Marketplace.Domain
             switch (@event)
             {
                 case Events.ClassifiedAdCreated e:
-                    Id = new ClassifiedAdId(e.Id);
+                    ClassifiedAdId = new ClassifiedAdId(e.Id);
                     OwnerId = new UserId(e.OwnerId);
                     State = ClassifiedAdState.Inactive;
+                    ClassifiedAdId = e.Id;
                     break;
                 case Events.ClassifiedAdTitleChanged e:
                     Title = new ClassifiedAdTitle(e.Title);

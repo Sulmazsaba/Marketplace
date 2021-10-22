@@ -22,7 +22,7 @@ namespace Marketplace.Infrastructure
 
         public Task Add(ClassifiedAd entity)
         {
-            return _session.StoreAsync(entity, EntityId(entity.Id));
+            return _session.StoreAsync(entity, EntityId(entity.ClassifiedAdId));
         }
 
         public Task<bool> Exists(ClassifiedAdId id)
