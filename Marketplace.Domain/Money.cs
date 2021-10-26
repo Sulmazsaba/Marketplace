@@ -9,6 +9,10 @@ namespace Marketplace.Domain
 {
     public class Money : Value<Money>
     {
+        protected Money()
+        {
+            
+        }
         private const string DefaultCurrency = "EUR";
 
         public static Money FromDecimal(decimal amount, string currency, ICurrencyLookup currencyLookup) =>

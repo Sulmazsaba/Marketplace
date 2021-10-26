@@ -11,12 +11,16 @@ namespace Marketplace.Domain
 {
     public class ClassifiedAd : AggregateRoot<ClassifiedAdId>
     {
+        internal ClassifiedAd()
+        {
+            
+        }
         private string DbId
         {
             get => $"ClassifiedAd/{ClassifiedAdId}";
             set { }
         }
-        public ClassifiedAdId ClassifiedAdId { get; private set; }
+        public Guid ClassifiedAdId { get; private set; }
         public UserId OwnerId { get; private set; }
         public Price Price { get; private set; }
         public ClassifiedAdTitle Title { get; private set; }

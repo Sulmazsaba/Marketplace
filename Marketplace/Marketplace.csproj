@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <Compile Remove="CommandPattern\ClassifiedAdsCommandsApi.cs" />
+    <Compile Remove="Infrastructure\ClassifiedAdRepository.cs" />
   </ItemGroup>
 
   <ItemGroup>

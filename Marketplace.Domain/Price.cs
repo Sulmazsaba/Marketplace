@@ -9,7 +9,10 @@ namespace Marketplace.Domain
     public class Price : Money
     {
 
-
+        protected Price()
+        {
+            
+        }
         private Price(decimal amount, string currencyCode, ICurrencyLookup currencyLookup) : base(amount, currencyCode, currencyLookup)
         {
             if (amount < 0)

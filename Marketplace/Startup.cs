@@ -7,9 +7,11 @@ using Marketplace.Domain;
 using Marketplace.Domain.Repositories;
 using Marketplace.Framework;
 using Marketplace.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using Raven.Client.Documents;
+using Raven.Client.Documents.Operations.ConnectionStrings;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Marketplace
@@ -27,21 +29,26 @@ namespace Marketplace
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            var store = new DocumentStore()
-            {
-                Urls = new[] { "http://localhost:8080" },
-                Database = "Marketplace_Chapter8",
-                Conventions =
-                {
-                    FindIdentityProperty = m => m.Name == "DbId"
-                }
-            };
+            const string connectionString = "Host=localhost;Database=Marketplace_Chapter8;username=ddd;password=book";
 
-            store.Initialize();
+            // ravendb
+            //var store = new DocumentStore()
+            //{
+            //    Urls = new[] { "http://localhost:8080" },
+            //    Database = "Marketplace_Chapter8",
+            //    Conventions =
+            //    {
+            //        FindIdentityProperty = m => m.Name == "DbId"
+            //    }
+            //};
+
+            //store.Initialize();
+            //services.AddScoped(c => store.OpenAsyncSession());
+            services.AddEntityFrameworkNpgsql()
+                .AddDbContext<ClassifiedAdDbContext>(options => options.UseNpgsql(connectionString));
             services.AddSingleton<ICurrencyLookup,FixedCurrencyLookup>();
-            services.AddScoped(c => store.OpenAsyncSession());
             services.AddScoped<IUnitOfWork, RavenDbUnitOfWork>();
-            services.AddScoped<IClassifiedAdRepository, ClassifiedAdRepository>();
+            services.AddScoped<IClassifiedAdRepository, ClassifiedAddRepository>();
             services.AddScoped<ClassifiedAdsApplicationService>();
 
             services.AddMvc(opt => opt.EnableEndpointRouting = false);
@@ -61,11 +68,11 @@ namespace Marketplace
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
+            app.EnsureDatabase();
             app.UseMvcWithDefaultRoute();
             app.UseSwagger(c =>
             {
